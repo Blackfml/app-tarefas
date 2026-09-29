@@ -13,11 +13,25 @@ const seed:Task[]=[
 const names=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"], icons=["🛏️","📚","🧹","🪥","🍽️","🧸","🚿","🎒","⭐"];
 const dateKey=(d=new Date())=>d.toISOString().slice(0,10);
 function Index(){
- const [tasks,setTasks]=useState<Task[]>(()=>JSON.parse(localStorage.getItem("rp_tasks")||"null")||seed);
- const [done,setDone]=useState<Done[]>(()=>JSON.parse(localStorage.getItem("rp_done")||"[]"));
+ const [tasks,setTasks]=useState<Task[]>(seed);
+ const [done,setDone]=useState<Done[]>([]);
  const [tab,setTab]=useState("inicio"),[modal,setModal]=useState(false),[edit,setEdit]=useState<Task|null>(null),[toast,setToast]=useState("");
- const [child,setChild]=useState(()=>localStorage.getItem("rp_child")||"Lívia");
- useEffect(()=>localStorage.setItem("rp_tasks",JSON.stringify(tasks)),[tasks]);useEffect(()=>localStorage.setItem("rp_done",JSON.stringify(done)),[done]);useEffect(()=>localStorage.setItem("rp_child",child),[child]);
+ const [child,setChild]=useState("Lívia");
+ const [hydrated,setHydrated]=useState(false);
+ useEffect(()=>{
+  try{
+   const savedTasks=JSON.parse(window.localStorage.getItem("rp_tasks")||"null");
+   const savedDone=JSON.parse(window.localStorage.getItem("rp_done")||"[]");
+   const savedChild=window.localStorage.getItem("rp_child");
+   if(Array.isArray(savedTasks)) setTasks(savedTasks);
+   if(Array.isArray(savedDone)) setDone(savedDone);
+   if(savedChild) setChild(savedChild);
+  }catch(error){console.warn("Não foi possível restaurar os dados locais.",error);}
+  setHydrated(true);
+ },[]);
+ useEffect(()=>{if(hydrated) window.localStorage.setItem("rp_tasks",JSON.stringify(tasks));},[tasks,hydrated]);
+ useEffect(()=>{if(hydrated) window.localStorage.setItem("rp_done",JSON.stringify(done));},[done,hydrated]);
+ useEffect(()=>{if(hydrated) window.localStorage.setItem("rp_child",child);},[child,hydrated]);
  const today=new Date(),tom=new Date();tom.setDate(tom.getDate()+1);const todayD=today.getDay(),tomD=tom.getDay();
  const todayTasks=useMemo(()=>tasks.filter(t=>t.days.includes(todayD)),[tasks,todayD]),tomTasks=useMemo(()=>tasks.filter(t=>t.days.includes(tomD)),[tasks,tomD]);
  const todayDone=done.filter(x=>x.date===dateKey()),approved=todayDone.filter(x=>x.approved),pending=todayDone.filter(x=>!x.approved);
