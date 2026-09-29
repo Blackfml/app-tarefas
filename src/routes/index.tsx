@@ -29,11 +29,11 @@ function Index(){
  return <div className="app"><aside><div className="logo"><div>✦</div><b>Rotina<span>+</span></b></div><div className="mother">👩<section><b>Responsável</b><small>Perfil da mãe</small></section></div><nav><Nav icon={<Home/>} text="Início" active={tab==="inicio"} on={()=>setTab("inicio")}/><Nav icon={<ListChecks/>} text="Tarefas" active={tab==="tarefas"} on={()=>setTab("tarefas")}/><Nav icon={<CalendarDays/>} text="Programação" active={tab==="agenda"} on={()=>setTab("agenda")}/><Nav icon={<Gift/>} text="Recompensas" active={tab==="recompensas"} on={()=>setTab("recompensas")}/></nav><div className="auto">● Automação ativa<small>Planeja o próximo dia</small></div><Nav icon={<Settings/>} text="Configurações" active={tab==="config"} on={()=>setTab("config")}/></aside>
  <main><header><div><small>ROTINA DA FAMÍLIA</small><h1>{tab==="inicio"?"Bom dia! 👋":tab==="tarefas"?"Tarefas":tab==="agenda"?"Programação":tab==="recompensas"?"Recompensas":"Configurações"}</h1></div><button className="bell"><Bell/></button></header>
  {tab==="inicio"&&<Dashboard {...{child,todayTasks,tomTasks,earned,possible,todayDone,pending,complete,approveAll,setTab}}/>}
- {tab==="tarefas"&&<Tasks tasks={tasks} add={()=>{setEdit(null);setModal(true)}} edit={t=>{setEdit(t);setModal(true)}} remove={id=>{setTasks(v=>v.filter(x=>x.id!==id));msg("Tarefa removida.")}}/>}
+ {tab==="tarefas"&&<Tasks tasks={tasks} add={()=>{setEdit(null);setModal(true)}} edit={(t:Task)=>{setEdit(t);setModal(true)}} remove={(id:string)=>{setTasks(v=>v.filter(x=>x.id!==id));msg("Tarefa removida.")}}/>}
  {tab==="agenda"&&<Agenda tasks={tomTasks} label={tomorrowLabel} msg={msg}/>}
  {tab==="recompensas"&&<Rewards earned={earned} msg={msg}/>}
  {tab==="config"&&<Config child={child} setChild={setChild} msg={msg}/>}
- </main>{modal&&<TaskModal initial={edit} close={()=>setModal(false)} save={t=>{setTasks(v=>edit?v.map(x=>x.id===edit.id?{...t,id:edit.id}:x):[...v,{...t,id:crypto.randomUUID()}]);setModal(false);msg(edit?"Tarefa atualizada.":"Tarefa criada.")}}/>}{toast&&<div className="toast">✓ {toast}</div>}</div>
+ </main>{modal&&<TaskModal initial={edit} close={()=>setModal(false)} save={(t:Omit<Task,"id">)=>{setTasks(v=>edit?v.map(x=>x.id===edit.id?{...t,id:edit.id}:x):[...v,{...t,id:crypto.randomUUID()}]);setModal(false);msg(edit?"Tarefa atualizada.":"Tarefa criada.")}}/>}{toast&&<div className="toast">✓ {toast}</div>}</div>
 }
 function Nav(p:any){return <button className={"nav "+(p.active?"active":"")} onClick={p.on}>{p.icon}<span>{p.text}</span></button>}
 function Dashboard(p:any){
