@@ -1,24 +1,47 @@
-import { createFileRoute } from "@tanstack/react-router";
+import {createFileRoute} from "@tanstack/react-router";
+import {useEffect,useMemo,useState} from "react";
+import {Bell,CalendarDays,Check,Clock3,Gift,Home,ListChecks,Plus,Settings,Star,Target,Trash2,Trophy,X,Pencil,Sparkles} from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+export const Route=createFileRoute("/")({component:Index});
+type Task={id:string;title:string;description:string;minutes:number;icon:string;days:number[]};
+type Done={date:string;taskId:string;approved:boolean};
+const seed:Task[]=[
+{id:"1",title:"Arrumar a cama",description:"Deixar o quarto organizado ao acordar.",minutes:10,icon:"🛏️",days:[1,2,3,4,5]},
+{id:"2",title:"Fazer a tarefa escolar",description:"Concluir as atividades da escola.",minutes:30,icon:"📚",days:[1,2,3,4,5]},
+{id:"3",title:"Organizar o quarto",description:"Guardar objetos e deixar tudo no lugar.",minutes:20,icon:"🧹",days:[2,4,6]},
+{id:"4",title:"Escovar os dentes",description:"Manhã e noite.",minutes:5,icon:"🪥",days:[0,1,2,3,4,5,6]}];
+const names=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"], icons=["🛏️","📚","🧹","🪥","🍽️","🧸","🚿","🎒","⭐"];
+const dateKey=(d=new Date())=>d.toISOString().slice(0,10);
+function Index(){
+ const [tasks,setTasks]=useState<Task[]>(()=>JSON.parse(localStorage.getItem("rp_tasks")||"null")||seed);
+ const [done,setDone]=useState<Done[]>(()=>JSON.parse(localStorage.getItem("rp_done")||"[]"));
+ const [tab,setTab]=useState("inicio"),[modal,setModal]=useState(false),[edit,setEdit]=useState<Task|null>(null),[toast,setToast]=useState("");
+ const [child,setChild]=useState(()=>localStorage.getItem("rp_child")||"Lívia");
+ useEffect(()=>localStorage.setItem("rp_tasks",JSON.stringify(tasks)),[tasks]);useEffect(()=>localStorage.setItem("rp_done",JSON.stringify(done)),[done]);useEffect(()=>localStorage.setItem("rp_child",child),[child]);
+ const today=new Date(),tom=new Date();tom.setDate(tom.getDate()+1),todayD=today.getDay(),tomD=tom.getDay();
+ const todayTasks=useMemo(()=>tasks.filter(t=>t.days.includes(todayD)),[tasks,todayD]),tomTasks=useMemo(()=>tasks.filter(t=>t.days.includes(tomD)),[tasks,tomD]);
+ const approved=done.filter(x=>x.date===dateKey()&&x.approved),pending=done.filter(x=>x.date===dateKey()&&!x.approved);
+ const earned=approved.reduce((s,x)=>s+(tasks.find(t=>t.id===x.taskId)?.minutes||0),0),possible=todayTasks.reduce((s,t)=>s+t.minutes,0);
+ const msg=(s:string)=>{setToast(s);setTimeout(()=>setToast(""),2600)};
+ const complete=(t:Task)=>{if(done.some(x=>x.date===dateKey()&&x.taskId===t.id))return;setDone(v=>[...v,{date:dateKey(),taskId:t.id,approved:false}]);msg("Enviado para aprovação da mãe.");};
+ const approveAll=()=>{setDone(v=>v.map(x=>x.date===dateKey()?{...x,approved:true}:x));msg("Tarefas aprovadas. Recompensas liberadas!");};
+ const tomorrowLabel=tom.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
+ return <div className="app"><aside><div className="logo"><div>✦</div><b>Rotina<span>+</span></b></div><div className="mother">👩<section><b>Responsável</b><small>Perfil da mãe</small></section></div><nav><Nav icon={<Home/>} text="Início" active={tab==="inicio"} on={()=>setTab("inicio")}/><Nav icon={<ListChecks/>} text="Tarefas" active={tab==="tarefas"} on={()=>setTab("tarefas")}/><Nav icon={<CalendarDays/>} text="Programação" active={tab==="agenda"} on={()=>setTab("agenda")}/><Nav icon={<Gift/>} text="Recompensas" active={tab==="recompensas"} on={()=>setTab("recompensas")}/></nav><div className="auto">● Automação ativa<small>Planeja o próximo dia</small></div><Nav icon={<Settings/>} text="Configurações" active={tab==="config"} on={()=>setTab("config")}/></aside>
+ <main><header><div><small>ROTINA DA FAMÍLIA</small><h1>{tab==="inicio"?"Bom dia! 👋":tab==="tarefas"?"Tarefas":tab==="agenda"?"Programação":tab==="recompensas"?"Recompensas":"Configurações"}</h1></div><button className="bell"><Bell/></button></header>
+ {tab==="inicio"&&<Dashboard {...{child,todayTasks,tomTasks,earned,possible,pending,complete,approveAll,setTab}}/>}
+ {tab==="tarefas"&&<Tasks tasks={tasks} add={()=>{setEdit(null);setModal(true)}} edit={t=>{setEdit(t);setModal(true)}} remove={id=>{setTasks(v=>v.filter(x=>x.id!==id));msg("Tarefa removida.")}}/>}
+ {tab==="agenda"&&<Agenda tasks={tomTasks} label={tomorrowLabel} msg={msg}/>}
+ {tab==="recompensas"&&<Rewards earned={earned} msg={msg}/>}
+ {tab==="config"&&<Config child={child} setChild={setChild} msg={msg}/>}
+ </main>{modal&&<TaskModal initial={edit} close={()=>setModal(false)} save={t=>{setTasks(v=>edit?v.map(x=>x.id===edit.id?{...t,id:edit.id}:x):[...v,{...t,id:crypto.randomUUID()}]);setModal(false);msg(edit?"Tarefa atualizada.":"Tarefa criada.")}}/>}{toast&&<div className="toast">✓ {toast}</div>}</div>
 }
+function Nav(p:any){return <button className={"nav "+(p.active?"active":"")} onClick={p.on}>{p.icon}<span>{p.text}</span></button>}
+function Dashboard(p:any){let pct=p.possible?Math.round(p.earned/p.possible*100):0;return <div className="content"><section className="grid"><div className="hero"><div><label>HOJE</label><h2>Vamos ajudar <em>{p.child}</em> a conquistar o dia.</h2><p>Cada tarefa aprovada transforma responsabilidade em minutos de tempo de tela.</p></div><div className="ring" style={{background:`conic-gradient(#5b5ce2 ${pct}%,#e9ebf3 0)`}}><div><b>{p.earned}</b><small> / {p.possible} min</small></div></div></div><div className="tom"><label>AMANHÃ</label><h3>{p.tomTasks.length} tarefas programadas</h3><p className="capitalize">{new Date(Date.now()+86400000).toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"})}</p>{p.tomTasks.slice(0,4).map((t:Task)=><div className="mini" key={t.id}><span>{t.icon}</span><b>{t.title}</b><strong>+{t.minutes} min</strong></div>)}<button className="outline" onClick={()=>p.setTab("agenda")}>Revisar programação →</button></div></section>
+ <div className="title"><div><label>ACOMPANHAMENTO</label><h2>Tarefas de hoje</h2></div><button onClick={()=>p.setTab("tarefas")}>Gerenciar →</button></div><section className="list">{p.todayTasks.map((t:Task)=><TaskLine key={t.id} t={t} done={p.pending.some((x:Done)=>x.taskId===t.id)||false} approved={false} complete={()=>p.complete(t)}/>)}</section>{p.pending.length>0&&<div className="approval"><div>✓</div><span><b>{p.pending.length} aguardando aprovação</b><small>Confirme para liberar as recompensas.</small></span><button onClick={p.approveAll}>Aprovar todas</button></div>}<div className="stats"><Stat icon={<Clock3/>} v={p.earned+" min"} t="ganhos hoje"/><Stat icon={<Target/>} v={p.todayTasks.length} t="tarefas hoje"/><Stat icon={<Trophy/>} v="4" t="dias de sequência"/><Stat icon={<Star/>} v="86%" t="média semanal"/></div></div>}
+function TaskLine({t,done,complete}:any){return <div className="line"><div className="taskicon">{t.icon}</div><div className="tasktext"><b>{t.title}</b><small>{t.description}</small></div><span className="reward">◷ +{t.minutes} min</span><button className={"check "+(done?"checked":"")} onClick={complete}>{done?"✓":""}</button></div>}
+function Stat(p:any){return <div className="stat"><div>{p.icon}</div><section><b>{p.v}</b><small>{p.t}</small></section></div>}
+function Tasks({tasks,add,edit,remove}:any){return <div className="content"><div className="toolbar"><div><small>ROTINAS RECORRENTES</small><h2>Suas tarefas</h2></div><button className="primary" onClick={add}>＋ Nova tarefa</button></div><div className="cards">{tasks.map((t:Task)=><article className="taskcard" key={t.id}><div className="tasktop"><div className="bigicon">{t.icon}</div><div><h3>{t.title}</h3><p>{t.description}</p></div></div><div className="taskbottom"><b>◷ +{t.minutes} min</b><span>{names.map((n,i)=><i className={t.days.includes(i)?"on":""} key={n}>{n[0]}</i>)}</span><button onClick={()=>edit(t)}><Pencil/></button><button className="danger" onClick={()=>remove(t.id)}><Trash2/></button></div></article>)}</div></div>}
+function Agenda({tasks,label,msg}:any){return <div className="content"><div className="automation"><Sparkles/><div><small>PLANEJAMENTO AUTOMÁTICO</small><h2>Tarefas de amanhã</h2><p>O sistema prepara a programação do próximo dia a partir das suas rotinas recorrentes.</p></div><strong>● Ativo</strong></div><div className="title"><div><label>PRÓXIMO DIA</label><h2 className="capitalize">{label}</h2></div><button className="outline" onClick={()=>msg("Programação de amanhã atualizada.")}>Atualizar</button></div><section className="list">{tasks.map((t:Task)=><div className="line" key={t.id}><div className="taskicon">{t.icon}</div><div className="tasktext"><b>{t.title}</b><small>{t.description}</small></div><span className="reward">+{t.minutes} min</span><span className="scheduled">✓ Programada</span></div>)}</section><div className="info"><Bell/><span><b>Envio automático</b><small>O planejamento está preparado. Para notificações mesmo com o site fechado, a próxima etapa será conectar um serviço de notificações/cron.</small></span></div></div>}
+function Rewards({earned,msg}:any){return <div className="content"><div className="rewardhero"><div><small>SALDO CONQUISTADO HOJE</small><h2>{earned}<i> minutos</i></h2><p>Tempo liberado após aprovação da mãe.</p></div><Gift/></div><div className="title"><div><label>RECOMPENSA</label><h2>Resgatar tempo</h2></div></div><div className="redeem"><Clock3/><span><b>Aplicar tempo de tela</b><small>Registre a recompensa e use-a como referência no controle parental.</small></span><strong>{earned} min</strong><button className="primary" disabled={!earned} onClick={()=>msg("Recompensa registrada.")}>Resgatar</button></div><div className="info"><Sparkles/><span><b>Family Link</b><small>O app mantém o saldo e o histórico. A aplicação dentro do Family Link precisa usar uma integração oficialmente suportada.</small></span></div></div>}
+function Config({child,setChild,msg}:any){return <div className="content"><div className="toolbar"><div><small>PERSONALIZAÇÃO</small><h2>Configurações</h2></div></div><div className="settings"><div><span>👧</span><section><b>Nome da criança</b><small>Usado no painel e nas mensagens.</small></section><input value={child} onChange={e=>setChild(e.target.value)}/></div><div><span>🔔</span><section><b>Automação do dia anterior</b><small>Preparar automaticamente as tarefas de amanhã.</small></section><i className="switch on"/></div><div><span>🛡️</span><section><b>Aprovação da mãe</b><small>Nenhuma recompensa é liberada sem confirmação.</small></section><i className="switch on"/></div></div><button className="primary" onClick={()=>msg("Configurações salvas.")}>Salvar alterações</button></div>}
+function TaskModal({initial,close,save}:any){const [title,setTitle]=useState(initial?.title||""),[desc,setDesc]=useState(initial?.description||""),[minutes,setMinutes]=useState(initial?.minutes||10),[icon,setIcon]=useState(initial?.icon||"⭐"),[days,setDays]=useState<number[]>(initial?.days||[1,2,3,4,5]);const tog=(d:number)=>setDays(v=>v.includes(d)?v.filter(x=>x!==d):[...v,d]);return <div className="back"><div className="modal"><header><div><small>{initial?"EDITAR":"NOVA"} TAREFA</small><h2>{initial?"Editar tarefa":"Criar tarefa"}</h2></div><button onClick={close}><X/></button></header><label>Nome<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Ex.: Guardar os brinquedos"/></label><label>Descrição<textarea value={desc} onChange={e=>setDesc(e.target.value)}/></label><div className="twocol"><label>Minutos<input type="number" min="1" value={minutes} onChange={e=>setMinutes(+e.target.value)}/></label><label>Ícone<div className="icons">{icons.map(i=><button className={icon===i?"sel":""} onClick={()=>setIcon(i)} key={i}>{i}</button>)}</div></label></div><label>Dias<div className="days">{names.map((n,i)=><button className={days.includes(i)?"sel":""} onClick={()=>tog(i)} key={n}>{n}</button>)}</div></label><footer><button className="outline" onClick={close}>Cancelar</button><button className="primary" disabled={!title||!days.length} onClick={()=>save({title,description:desc,minutes,icon,days})}>Salvar tarefa</button></footer></div></div>}
