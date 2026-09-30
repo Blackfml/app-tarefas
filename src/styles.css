@@ -231,3 +231,46 @@ button:active{transform:scale(.975)!important}
 .kiraGrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.8fr);gap:20px;align-items:start}.kiraChat,.kiraInsight,.kiraQuick,.kiraNote{border:1px solid rgba(37,40,58,.07);background:rgba(255,255,255,.82);box-shadow:var(--shadow);border-radius:24px}.kiraChat{overflow:hidden;min-height:560px;display:flex;flex-direction:column}.kiraChatHead{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid rgba(37,40,58,.06);background:rgba(248,247,255,.72)}.kiraMini{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#eeeafe;color:#7567e8}.kiraChatHead>div:last-child{display:grid;gap:3px}.kiraChatHead b{font-size:15px}.kiraChatHead small{color:#8a90a2}.kiraMessages{flex:1;padding:22px;display:grid;align-content:start;gap:14px;overflow:auto;max-height:500px}.kiraBubble{display:flex;gap:10px;max-width:82%;align-items:flex-start}.kiraBubble>div{width:31px;height:31px;flex:0 0 31px;border-radius:11px;display:grid;place-items:center;background:#eeeafe;color:#7567e8}.kiraBubble.user{margin-left:auto;flex-direction:row-reverse}.kiraBubble.user>div{background:#e8f6fd;color:#4c94b8}.kiraBubble p{margin:0;padding:12px 15px;border-radius:16px 18px 18px 4px;background:#f6f5fb;color:#45495c;line-height:1.55;font-size:13px;white-space:pre-line}.kiraBubble.user p{background:#7567e8;color:#fff;border-radius:18px 16px 4px 18px}.kiraInput{display:flex;gap:10px;padding:15px;border-top:1px solid rgba(37,40,58,.06);background:rgba(250,250,253,.8)}.kiraInput input{flex:1;border:1px solid #e0e2eb;border-radius:15px;padding:12px 14px;background:#fff;outline:none}.kiraInput input:focus{border-color:#a79df0;box-shadow:0 0 0 4px rgba(117,103,232,.08)}.kiraInput button{width:48px;padding:0;justify-content:center}.kiraSide{display:grid;gap:14px}.kiraInsight{padding:20px}.kiraInsight h3{margin:5px 0 15px;color:#2d3042}.kiraInsight>div{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid rgba(37,40,58,.06)}.kiraInsight>div b{font-size:20px;color:#7567e8}.kiraInsight>div small{color:#858b9f}.kiraInsight p{margin:14px 0 0;padding:12px;border-radius:14px;background:#f6f5fb;color:#73798d;font-size:12px;line-height:1.5}.kiraQuick{padding:18px;display:grid;gap:8px}.kiraQuick button{border:0;background:#faf9fe;padding:12px 13px;border-radius:14px;text-align:left;display:flex;align-items:center;gap:8px;color:#44485a;font-weight:700;cursor:pointer}.kiraQuick button svg{margin-left:auto;width:16px;color:#8b82e9}.kiraQuick button:hover{background:#f0edff;transform:translateX(2px)}.kiraNote{display:flex;gap:10px;padding:15px;color:#7567e8;background:#f8f7ff}.kiraNote>svg{width:20px;flex:0 0 20px}.kiraNote span{display:grid;gap:3px}.kiraNote b{font-size:12px}.kiraNote small{color:#777d90;line-height:1.45}
 @media(max-width:850px){.kiraHero{grid-template-columns:auto 1fr}.kiraStatus{grid-column:1/-1;justify-content:center}.kiraGrid{grid-template-columns:1fr}.kiraChat{min-height:500px}.kiraMessages{max-height:none}}
 @media(max-width:600px){.kiraHero{padding:18px;border-radius:22px;gap:12px}.kiraOrb{width:54px;height:54px;border-radius:18px}.kiraHero h2{font-size:21px}.kiraHero p{font-size:12px}.kiraChat,.kiraInsight,.kiraQuick,.kiraNote{border-radius:19px}.kiraBubble{max-width:92%}.kiraMessages{padding:15px}.kiraInput{padding:11px}.kiraInput input{font-size:13px}.kiraStatus{font-size:11px}}
+
+
+/* HEADER TOOLBAR + FLOATING KIRA */
+.app main>header .headerTitle{min-width:0}
+.headerTools{display:flex;align-items:center;gap:8px}
+.kiraTool,.profileTool{height:42px;border:1px solid rgba(224,227,239,.9);background:rgba(255,255,255,.88);color:#666b80;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 13px;cursor:pointer;box-shadow:0 8px 24px rgba(50,55,85,.055);transition:.22s ease;font-weight:800}
+.kiraTool svg{width:18px;height:18px;color:#7567e8}
+.kiraTool:hover,.kiraTool.active{transform:translateY(-2px);background:#f3f0ff;color:#6255d5;border-color:#ded8ff;box-shadow:0 13px 30px rgba(101,88,216,.13)}
+.profileTool{width:42px;padding:0;border-radius:14px;background:linear-gradient(145deg,#eeeafe,#eaf7fd);color:#6255d5;font-size:14px}
+.profileTool:hover{transform:translateY(-2px);box-shadow:0 13px 30px rgba(101,88,216,.12)}
+.kiraFloatOverlay{position:fixed;inset:0;z-index:1000;background:rgba(24,27,43,.18);backdrop-filter:blur(5px);display:flex;align-items:flex-end;justify-content:flex-end;padding:24px;animation:kiraOverlayIn .22s ease both}
+.kiraFloatWindow{width:min(720px,calc(100vw - 32px));height:min(760px,calc(100vh - 48px));background:#f7f8fc;border:1px solid rgba(255,255,255,.95);border-radius:28px;overflow:hidden;box-shadow:0 35px 100px rgba(24,28,50,.25);display:flex;flex-direction:column;animation:kiraWindowIn .3s cubic-bezier(.2,.8,.2,1) both}
+.kiraFloatTop{height:68px;flex:0 0 68px;padding:0 16px 0 18px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.88);border-bottom:1px solid #e7e8f0}
+.kiraFloatTop>div{display:flex;align-items:center;gap:10px}
+.kiraFloatTop>div>div{display:grid;gap:2px}
+.kiraFloatTop b{font-size:14px;color:#2d3042}
+.kiraFloatTop small{font-size:10px;color:#8a90a2}
+.kiraFloatDot{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#806ff0,#a797f7);color:#fff;box-shadow:0 8px 18px rgba(117,103,232,.22)}
+.kiraFloatDot svg{width:19px}
+.kiraFloatTop>button{width:36px;height:36px;border:0;border-radius:12px;background:#f3f4f8;color:#74798b;display:grid;place-items:center;cursor:pointer;transition:.2s}
+.kiraFloatTop>button:hover{background:#fff0eb;color:#c65d50;transform:rotate(4deg)}
+.kiraFloatWindow>.kiraPage{padding:0!important;overflow:auto;min-height:0;flex:1}
+.kiraFloatWindow>.kiraPage>.kiraHero{display:none}
+.kiraFloatWindow>.kiraPage>.kiraGrid{display:block;height:100%}
+.kiraFloatWindow .kiraChat{border:0;border-radius:0;box-shadow:none;height:100%;min-height:0}
+.kiraFloatWindow .kiraMessages{max-height:none}
+.kiraFloatWindow .kiraSide{display:none}
+.kiraFloatButton{position:fixed;right:24px;bottom:92px;z-index:900;width:62px;height:62px;border:0;border-radius:21px;background:linear-gradient(145deg,#806ff0,#6759d9);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 18px 38px rgba(101,88,216,.3),0 0 0 6px rgba(117,103,232,.08);transition:.25s ease}
+.kiraFloatButton svg{width:27px;height:27px}
+.kiraFloatButton:hover{transform:translateY(-5px) scale(1.03);box-shadow:0 24px 45px rgba(101,88,216,.35),0 0 0 8px rgba(117,103,232,.09)}
+.kiraFloatButton:after{content:"";position:absolute;right:3px;top:3px;width:10px;height:10px;border-radius:50%;background:#62cf99;border:2px solid #806ff0}
+@keyframes kiraOverlayIn{from{opacity:0}to{opacity:1}}
+@keyframes kiraWindowIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+ .headerTools{gap:5px}.kiraTool span{display:none}.kiraTool{width:42px;padding:0}
+ .kiraFloatOverlay{padding:0;align-items:stretch}
+ .kiraFloatWindow{width:100%;height:100%;border-radius:0}
+ .kiraFloatButton{right:16px;bottom:88px;width:58px;height:58px;border-radius:19px}
+}
+@media(prefers-reduced-motion:reduce){
+ .kiraFloatOverlay,.kiraFloatWindow{animation:none}
+ .kiraFloatButton{transition:none}
+}
