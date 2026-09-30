@@ -274,3 +274,15 @@ button:active{transform:scale(.975)!important}
  .kiraFloatOverlay,.kiraFloatWindow{animation:none}
  .kiraFloatButton{transition:none}
 }
+
+
+/* KIRA ACTION CARDS */
+.kiraSuggestion{margin:2px 0 4px 41px;padding:16px;border:1px solid #ddd8ff;border-radius:20px;background:linear-gradient(145deg,#fbfaff,#f1f8ff);box-shadow:0 12px 28px rgba(101,88,216,.08)}
+.kiraSuggestionHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px;border-bottom:1px solid rgba(117,103,232,.1)}
+.kiraSuggestionHead>div{display:grid;gap:3px}.kiraSuggestionHead b{font-size:14px;color:#303347}.kiraSuggestionHead small{color:#858b9f}
+.kiraSuggestionItem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(37,40,58,.05)}
+.kiraSuggestionItem>span{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:#fff;font-size:18px}
+.kiraSuggestionItem>div{flex:1;display:grid;gap:2px}.kiraSuggestionItem b{font-size:12px;color:#383b4d}.kiraSuggestionItem small{font-size:10px;color:#858b9f;line-height:1.35}
+.kiraSuggestionItem em{font-style:normal;font-size:10px;font-weight:800;color:#6659d6;background:#eeeafe;padding:5px 7px;border-radius:8px;white-space:nowrap}
+.kiraSuggestionActions{display:flex;gap:8px;padding-top:12px}.kiraSuggestionActions button{font-size:11px!important}
+@media(max-width:600px){.kiraSuggestion{margin-left:0;padding:13px;border-radius:17px}.kiraSuggestionActions{flex-direction:column}.kiraSuggestionActions button{width:100%;justify-content:center}.kiraSuggestionItem>div{min-width:0}}
