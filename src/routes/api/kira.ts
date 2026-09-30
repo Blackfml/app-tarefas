@@ -1,6 +1,6 @@
 import {createFileRoute} from "@tanstack/react-router";
 import {GoogleGenAI} from "@google/genai";
-import {buildKiraPrompt} from "../../server";
+import {buildKiraPrompt} from "../../lib/kira";
 
 type KiraRequest={message:string;context:unknown;history?:{role:"user"|"model";text:string}[]};
 
