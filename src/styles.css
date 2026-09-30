@@ -192,3 +192,33 @@ button:active{transform:scale(.975)!important}
  .stat,.taskcard,.line,.settings>div{animation:softRise .45s ease both}
 }
 @keyframes softRise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+/* RESPONSIBLE APPROVAL CENTER */
+.approvalPanel{margin-top:18px;padding:20px;border:1px solid rgba(117,103,232,.16);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(246,244,255,.92));box-shadow:0 16px 38px rgba(45,43,76,.08),inset 0 1px 0 rgba(255,255,255,.9)}
+.approvalHead{display:flex;align-items:center;gap:14px}
+.approvalBadge{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:#eeeafe;color:#7567e8;font-weight:800}
+.approvalHead>div:nth-child(2){display:grid;gap:3px;flex:1}
+.approvalHead>div:nth-child(2) b{font-size:16px;color:#25283a}
+.approvalHead>div:nth-child(2) small{color:#858b9f}
+.approveAllBtn{white-space:nowrap}
+.pendingList{display:grid;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(117,103,232,.1)}
+.pendingTask{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:17px;background:rgba(255,255,255,.78);border:1px solid rgba(37,40,58,.06)}
+.pendingIcon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:#f4f1ff;font-size:20px}
+.pendingTask>div{flex:1;display:grid;gap:3px}
+.pendingTask b{font-size:14px;color:#303347}
+.pendingTask small{font-size:12px;color:#858b9f}
+.rejectBtn{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:12px;padding:9px 12px;background:#fff0eb;color:#c65d50;font-weight:700;cursor:pointer;transition:.2s}
+.rejectBtn:hover{transform:translateY(-1px);background:#ffe5df}
+.rejectBtn svg{width:15px;height:15px}
+.rejectedNotice{display:flex;align-items:center;gap:12px;margin-top:12px;padding:13px 16px;border-radius:17px;background:#fff7f4;border:1px solid #f5ddd7;color:#c65d50}
+.rejectedNotice svg{width:19px}
+.rejectedNotice span{display:grid;gap:2px}
+.rejectedNotice small{color:#858b9f}
+@media(max-width:760px){
+ .approvalPanel{padding:15px;border-radius:20px}
+ .approvalHead{align-items:flex-start;flex-wrap:wrap}
+ .approveAllBtn{width:100%;justify-content:center}
+ .pendingTask{align-items:flex-start;flex-wrap:wrap}
+ .pendingTask>div{min-width:calc(100% - 54px)}
+ .rejectBtn{margin-left:54px;width:calc(100% - 54px);justify-content:center}
+}
