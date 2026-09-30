@@ -4,7 +4,7 @@ import {Bell,CalendarDays,Check,Clock3,Gift,Home,ListChecks,Plus,Settings,Star,T
 
 export const Route=createFileRoute("/")({component:Index});
 type Task={id:string;title:string;description:string;minutes:number;icon:string;days:number[];rewardLabel:string};
-type FamilyAccount={responsible:string;email:string;child:string;createdAt:string;pin?:string};
+type FamilyAccount={responsible:string;email:string;child:string;createdAt:string;pin?:string;familyCode?:string};
 type Done={date:string;taskId:string;approved:boolean};
 const seed:Task[]=[
 {id:"1",title:"Arrumar a cama",description:"Deixar o quarto organizado ao acordar.",minutes:10,icon:"🛏️",days:[1,2,3,4,5],rewardLabel:"10 minutos de tela"},
@@ -53,7 +53,7 @@ function Index(){
  const approveAll=()=>{setDone(v=>v.map(x=>x.date===dateKey()?{...x,approved:true}:x));msg("Tarefas aprovadas. Recompensas liberadas!");};
  const tomorrowLabel=tom.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
  return <div className="app"><aside><div className="logo"><div>✦</div><b>Rotina<span>+</span></b></div><div className="mother" onClick={()=>setRole("child")}>👩<section><b>{account?.responsible||"Responsável"}</b><small>Perfil responsável · tocar para modo filha</small></section></div><nav><Nav icon={<Home/>} text="Início" active={tab==="inicio"} on={()=>setTab("inicio")}/><Nav icon={<ListChecks/>} text="Tarefas" active={tab==="tarefas"} on={()=>setTab("tarefas")}/><Nav icon={<CalendarDays/>} text="Programação" active={tab==="agenda"} on={()=>setTab("agenda")}/><Nav icon={<Gift/>} text="Recompensas" active={tab==="recompensas"} on={()=>setTab("recompensas")}/><Nav icon={<Settings/>} text="Configurações" active={tab==="config"} on={()=>setTab("config")}/></nav><div className="auto">● Automação ativa<small>Planeja o próximo dia</small></div><button className="logoutNav" onClick={()=>setProfilePicker(true)}><LogIn/><span>Trocar perfil / Sair</span></button></aside>
- <main><header><div><small>ROTINA DA FAMÍLIA</small><h1>{tab==="inicio"?"Bom dia! 👋":tab==="tarefas"?"Tarefas":tab==="agenda"?"Programação":tab==="recompensas"?"Recompensas":"Configurações"}</h1></div><button className="bell" onClick={()=>setRole("child")} title="Abrir modo filha"><Bell/></button></header>
+ <main><header><div><small>ROTINA DA FAMÍLIA · {account?.child||"Família"}</small><h1>{tab==="inicio"?`Bom dia, ${account?.responsible||"família"} 🌷`:tab==="tarefas"?"Tarefas":tab==="agenda"?"Programação":tab==="recompensas"?"Recompensas":"Configurações"}</h1></div><button className="bell" onClick={()=>setRole("child")} title="Abrir modo filha"><Bell/></button></header>
  {tab==="inicio"&&<Dashboard {...{child,todayTasks,tomTasks,earned,possible,todayDone,pending,complete,approveAll,setTab}}/>}
  {tab==="tarefas"&&<Tasks tasks={tasks} add={()=>{setEdit(null);setModal(true)}} edit={(t:Task)=>{setEdit(t);setModal(true)}} remove={(id:string)=>{setTasks(v=>v.filter(x=>x.id!==id));msg("Tarefa removida.")}}/>}
  {tab==="agenda"&&<Agenda tasks={tomTasks} label={tomorrowLabel} msg={msg}/>}
@@ -66,18 +66,18 @@ function Dashboard(p:any){
  const completed=p.todayDone.length, total=p.todayTasks.length, pct=total?Math.round(completed/total*100):0;
  return <div className="content">
   <section className="welcome">
-   <div className="welcomeCopy"><span className="eyebrow">PAINEL DA FAMÍLIA</span><h2>Olá, responsável! <span>👋</span></h2><p>Acompanhe a rotina de <b>{p.child}</b>, aprove as tarefas e transforme pequenas conquistas em tempo de tela.</p><div className="welcomeActions"><button className="primary" onClick={()=>p.setTab("tarefas")}><Plus/> Nova tarefa</button><button className="soft" onClick={()=>p.setTab("agenda")}><CalendarDays/> Ver amanhã</button></div></div>
-   <div className="progressCard"><div className="progressRing" style={{background:`conic-gradient(#6869ec ${pct}%,#eceef6 0)`}}><div><b>{pct}%</b><small>concluído</small></div></div><span>Hoje</span><strong>{completed} de {total} tarefas</strong></div>
+   <div className="welcomeCopy"><span className="eyebrow">UM PASSO DE CADA VEZ</span><h2>Vamos cuidar da rotina da {p.child}. <span>🌷</span></h2><p>Pequenas tarefas, grandes conquistas. Acompanhe o dia, aprove as tarefas e transforme cada momento em uma recompensa.</p><div className="welcomeActions"><button className="primary" onClick={()=>p.setTab("tarefas")}><Plus/> Nova tarefa</button><button className="soft" onClick={()=>p.setTab("agenda")}><CalendarDays/> Ver amanhã</button></div></div>
+   <div className="progressCard"><div className="progressRing" style={{background:`conic-gradient(#6869ec ${pct}%,#eceef6 0)`}}><div><b>{pct}%</b><small>concluído</small></div></div><span>Progresso de hoje</span><strong>{completed} de {total} tarefas</strong></div>
   </section>
-  <section className="quickStats"><Stat icon={<Clock3/>} v={p.earned+" min"} t="liberados hoje"/><Stat icon={<ListChecks/>} v={completed+"/"+total} t="tarefas concluídas"/><Stat icon={<Trophy/>} v="4 dias" t="sequência atual"/><Stat icon={<Star/>} v="86%" t="média semanal"/></section>
+  <section className="quickStats"><Stat icon={<Clock3/>} v={p.earned+" min"} t="recompensa liberada"/><Stat icon={<ListChecks/>} v={completed+"/"+total} t="tarefas concluídas"/><Stat icon={<Trophy/>} v="4 dias" t="dias em sequência"/><Stat icon={<Star/>} v="86%" t="ritmo da semana"/></section>
   <div className="homeGrid">
-   <section><div className="sectionHead"><div><span className="eyebrow">ROTINA DE HOJE</span><h2>Tarefas de {p.child}</h2></div><button className="textBtn" onClick={()=>p.setTab("tarefas")}>Gerenciar tarefas →</button></div>
+   <section><div className="sectionHead"><div><span className="eyebrow">ROTINA DE HOJE</span><h2>Passinhos de {p.child}</h2></div><button className="textBtn" onClick={()=>p.setTab("tarefas")}>Gerenciar tarefas →</button></div>
    <div className="list homeList">{p.todayTasks.length?p.todayTasks.map((t:Task)=><TaskLine key={t.id} t={t} done={p.todayDone.some((x:Done)=>x.taskId===t.id)} complete={()=>p.complete(t)}/>):<div className="empty"><Target/><b>Nenhuma tarefa para hoje</b><small>Crie uma rotina para começar.</small></div>}</div>
    {p.pending.length>0&&<div className="approval"><div>✓</div><span><b>{p.pending.length} tarefa(s) aguardando aprovação</b><small>Confirme as tarefas realizadas para liberar os minutos.</small></span><button onClick={p.approveAll}>Aprovar todas</button></div>}
    </section>
    <aside className="tomorrowCard"><div className="tomorrowTop"><div><span className="eyebrow">PRÓXIMO DIA</span><h2>Amanhã</h2><p className="capitalize">{new Date(Date.now()+86400000).toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"})}</p></div><div className="tomorrowIcon"><Sparkles/></div></div><div className="tomorrowList">{p.tomTasks.slice(0,5).map((t:Task)=><div className="tomorrowItem" key={t.id}><span>{t.icon}</span><div><b>{t.title}</b><small>+{t.minutes} min</small></div><Check/></div>)}{!p.tomTasks.length&&<small className="muted">Nenhuma tarefa programada.</small>}</div><button className="outline full" onClick={()=>p.setTab("agenda")}>Revisar programação</button></aside>
   </div>
-  <section className="automationHome"><div className="automationIcon"><Sparkles/></div><div><span className="eyebrow">AUTOMAÇÃO ATIVA</span><h3>O próximo dia já está sendo preparado</h3><p>As tarefas recorrentes são organizadas automaticamente de acordo com os dias configurados.</p></div><strong>● Ativo</strong></section>
+  <section className="automationHome"><div className="automationIcon"><Sparkles/></div><div><span className="eyebrow">ROTINA TRANQUILA</span><h3>O próximo dia já está sendo preparado</h3><p>As tarefas recorrentes ficam organizadas para que a família possa focar no que realmente importa.</p></div><strong>● Tudo certo</strong></section>
  </div>
 }
 function TaskLine({t,done,complete}:any){return <div className="line"><div className="taskicon">{t.icon}</div><div className="tasktext"><b>{t.title}</b><small>{t.description}</small></div><span className="reward">🎁 +{t.minutes} min</span><button className={"check "+(done?"checked":"")} onClick={complete}>{done?"✓":""}</button></div>}
