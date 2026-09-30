@@ -5,7 +5,8 @@ import {Bell,CalendarDays,Check,Clock3,Gift,Home,ListChecks,Plus,Settings,Star,T
 export const Route=createFileRoute("/")({component:Index});
 type Task={id:string;title:string;description:string;minutes:number;icon:string;days:number[];rewardLabel:string};
 type FamilyAccount={responsible:string;email:string;child:string;createdAt:string;pin?:string;familyCode?:string};
-type Done={date:string;taskId:string;approved:boolean;rejected?:boolean};\ntype KiraSuggestion={title:string;description:string;minutes:number;icon:string;days:number[];rewardLabel:string};
+type Done={date:string;taskId:string;approved:boolean;rejected?:boolean};
+type KiraSuggestion={title:string;description:string;minutes:number;icon:string;days:number[];rewardLabel:string};
 const seed:Task[]=[
 {id:"1",title:"Arrumar a cama",description:"Deixar o quarto organizado ao acordar.",minutes:10,icon:"🛏️",days:[1,2,3,4,5],rewardLabel:"10 minutos de tela"},
 {id:"2",title:"Fazer a tarefa escolar",description:"Concluir as atividades da escola.",minutes:30,icon:"📚",days:[1,2,3,4,5],rewardLabel:"30 minutos de tela"},
