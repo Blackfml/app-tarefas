@@ -25,7 +25,8 @@ function Index(){
  const [child,setChild]=useState("Lívia");
  const [hydrated,setHydrated]=useState(false);
  const [rewardName,setRewardName]=useState("Tempo de tela");
- const [kiraMessages,setKiraMessages]=useState<{role:"kira"|"user";text:string}[]>([{role:"kira",text:"Oi! Eu sou a Kira 💜 Posso ajudar você a organizar a rotina, pensar em recompensas e entender como a rotina da sua família está evoluindo."}]);\n const [kiraOpen,setKiraOpen]=useState(false);
+ const [kiraMessages,setKiraMessages]=useState<{role:"kira"|"user";text:string}[]>([{role:"kira",text:"Oi! Eu sou a Kira 💜 Posso ajudar você a organizar a rotina, pensar em recompensas e entender como a rotina da sua família está evoluindo."}]);
+ const [kiraOpen,setKiraOpen]=useState(false);
  useEffect(()=>{
   try{
    const savedAccount=JSON.parse(window.localStorage.getItem("rp_account")||"null");
