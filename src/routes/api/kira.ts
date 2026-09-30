@@ -4,7 +4,7 @@ import {buildKiraPrompt} from "../../lib/kira";
 
 type KiraRequest={message:string;context:unknown;history?:{role:"user"|"model";text:string}[]};
 
-function getKeys(){return (process.env.GEMINI_API_KEYS||process.env.GEMINI_API_KEY||"").split(",").map(k=>k.trim()).filter(Boolean);}
+function getKeys(){return (process.env['GEMINI_API_KEYS']||process.env['GEMINI_API_KEY']||"").split(",").map(k=>k.trim()).filter(Boolean);}
 
 async function callGemini(body:KiraRequest){
  const keys=getKeys();
